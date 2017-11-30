@@ -13,7 +13,7 @@ the `gpiozero` library.
 The rover control is tailored to integrate with an RC car powered by 2 DC motors. The motors are driven by an
 Adafruit Stepper Motor HAT and a Raspberry Pi, implemented using the `Adafruit_MotorHAT` library.
 
-###Contributors###
+### Contributors
 Everest Witman: Project Manager, Junior Developer
 Joseph Zieg: Senior Developer
 Aaron Seibring: Head Hardware Engineer
