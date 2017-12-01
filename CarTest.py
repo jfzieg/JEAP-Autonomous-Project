@@ -2,9 +2,19 @@
 Authors:
 PJ Solomon November 27 2017
 Joseph Zieg November 29 2017
+Everest Witman November 29 2017
 
 Assumes Steering = Motor1, Drive = Motor4
 
+Some code adapted from https://learn.adafruit.com/adafruit-dc-and-stepper-motor-hat-for-raspberry-pi/using-dc-motors
+Documentation and tutorials for utilised libraries 
+
+Adafruit Motor Hat
+https://adafruit-motor-hat.readthedocs.io/en/latest/reference.html
+https://learn.adafruit.com/adafruit-dc-and-stepper-motor-hat-for-raspberry-pi/using-dc-motors
+
+GPIO Zero
+https://gpiozero.readthedocs.io/en/stable/
 
 !/usr/bin/python  `
 """
