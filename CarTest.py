@@ -1,14 +1,3 @@
-"""
-Authors:
-PJ Solomon November 27 2017
-Joseph Zieg November 29 2017
-
-Assumes Steering = Motor1, Drive = Motor4
-
-
-!/usr/bin/python  `
-"""
-
 from Adafruit_MotorHAT import Adafruit_MotorHAT, Adafruit_DCMotor
 from gpiozero import DistanceSensor
 import time
@@ -16,9 +5,9 @@ import atexit
 
 
 class car(object):
-    """
-    Controls for the rover. Uses input from sensors to
-    """
+
+   # Controls for the rover. Uses input from sensors to
+
     def __init__(self, addr=0x60, steering_id=1, drive_id=4):
         # Initialize HAT and motors
         self.mh = Adafruit_MotorHAT(addr)
@@ -28,7 +17,7 @@ class car(object):
         self.MAX_SPEED = 255
 
         # Initialize sensors
-        self.us1 = sensor(19, 16)  # These need to be set to the proper gpio pins
+        self.us1 = sensor(19, 16,1, 0.3)  # These need to be set to the
         #self.us2 = sensor(19, 20) #Re-enable when more sensors needed
 
     def turnOffMotors(self):
@@ -39,7 +28,7 @@ class car(object):
         for i in range(100):  # Runs for 10 seconds
             if self.us1.senseObject():
                 self.right(self.MAX_SPEED);
-            else
+            else:
                 self.steering.setSpeed(0)
                 self.forward(self.MAX_SPEED)
             time.sleep(.1)
@@ -76,32 +65,27 @@ class car(object):
 
 
 class sensor(object):
-    """
-    Interfaces with the HR-S04 ultrasonic range sensor
-    echo: GPIO pin to ECHO
-    trigger: GPIO pin to TRIGGER
+   # Interfaces with the HR-S04 ultrasonic range sensor
+   # echo: GPIO pin to ECHO
+   # trigger: GPIO pin to TRIGGER
 
-    max_distance: specified max range of the sensor in m
-    threshold_distance: distance at  which when_in_range is triggered
-    """
+   # max_distance: specified max range of the sensor in m
+   # threshold_distance: distance at  which when_in_range is triggered
+   
 
     def __init__(self, echo, trigger, max_d, trig_d):
         self.ultrasonic = DistanceSensor(echo, trigger, max_distance=max_d, threshold_distance=trig_d)
 
     def senseObject(self):
-        """
-        Senses if object is within the minimum safe distance
-        :return: True if an object is within range, false if not
-        """
+      #  """
+      #  Senses if object is within the minimum safe distance
+      #  :return: True if an object is within range, false if not
+       
         if self.ultrasonic.when_in_range():
             return True
         else:
             return False
 
-
-"""
-CODE TO RUN THE CAR. 
-"""
 car = car()
 
-car.drive()
+car.test()
