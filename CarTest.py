@@ -28,8 +28,8 @@ class car(object):
         self.MAX_SPEED = 255
 
         # Initialize sensors
-        self.us1 = sensor(2, 3)  # These need to be set to the proper gpio pins
-        self.us2 = sensor(19, 20)
+        self.us1 = sensor(19, 16)  # These need to be set to the proper gpio pins
+        #self.us2 = sensor(19, 20) #Re-enable when more sensors needed
 
     def turnOffMotors(self):
         self.steering.run(Adafruit_MotorHAT.RELEASE)
@@ -37,11 +37,11 @@ class car(object):
 
     def drive(self):
         for i in range(100):  # Runs for 10 seconds
-            self.forward(self.MAX_SPEED)
             if self.us1.senseObject():
-                # Update with turning func
+                self.right(self.MAX_SPEED);
+            else
                 self.steering.setSpeed(0)
-                self.steering.run(Adafruit_MotorHAT.FORWARD)
+                self.forward(self.MAX_SPEED)
             time.sleep(.1)
 
     def forward(self, speed):
@@ -67,6 +67,12 @@ class car(object):
         # turn off motor
         self.motor.run(Adafruit_MotorHAT.RELEASE)
         self.steering.run(Adafruit_MotorHAT.RELEASE)
+
+    def right(self, speed):
+        self.steering.setSpeed(speed);
+        self.motor.setSpeed(speed);
+        self.steering.run(Adafruit_MotorHAT.FORWARD)
+        self.motor.run(Adafruit_MotorHAT.FORWARD)
 
 
 class sensor(object):
@@ -98,4 +104,4 @@ CODE TO RUN THE CAR.
 """
 car = car()
 
-car.test()
+car.drive()
