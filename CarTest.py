@@ -97,6 +97,12 @@ class Sensor(object):
         self.GPIO_TRIGGER = trigger
         self.GPIO_ECHO = echo
 
+        GPIO.setup(self.GPIO_TRIGGER, GPIO.OUT)
+        GPIO.setup(self.GPIO_ECHO, GPIO.IN)
+
+        GPIO.output(self.GPIO_TRIGGER, False)
+        time.sleep(2)
+
     def collisonWarning(self):
         if self.getDistance() <= self.MIN_DISTANCE:
             return True
@@ -104,12 +110,6 @@ class Sensor(object):
 
     def getDistance(self):
         # Returns the distance in cm given by the sensor
-        GPIO.setup(self.GPIO_TRIGGER, GPIO.OUT)
-        GPIO.setup(self.GPIO_ECHO, GPIO.IN)
-
-        GPIO.output(self.GPIO_TRIGGER, False)
-        print "Waiting For Sensor To Settle"
-        time.sleep(2)
 
         GPIO.output(self.GPIO_TRIGGER, True)
         time.sleep(0.00001)
@@ -127,12 +127,10 @@ class Sensor(object):
 
         distance = round(distance, 2)
 
-        print "Distance:", distance, "cm"
-
-        GPIO.cleanup()
+        return distance
 
     def distanceTest(self):
-        # Tests the sensor input, outputs to console fro 10s
+        # Tests the sensor input, outputs to console for 10s
         for i in range(100):
             dist = self.getDistance()
             print ("Measured Distance = %.1f cm" % dist)
@@ -146,4 +144,4 @@ class Sensor(object):
 ####################
 car = Car()
 
-car.test()
+car.us1.getDistance()
