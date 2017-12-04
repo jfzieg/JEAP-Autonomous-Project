@@ -8,13 +8,14 @@
 
 from Adafruit_MotorHAT import Adafruit_MotorHAT, Adafruit_DCMotor
 from gpiozero import DistanceSensor
+import RPi.GPIO as GPIO
 import time
 import atexit
 
+GPIO.setmode(GPIO.BCM)
 
 class car(object):
-
- #   Controls for the rover. Uses input from sensors to
+# Controls for the rover. Uses input from sensors to determine optimal course
 
     def __init__(self, addr=0x60, steering_id=1, drive_id=4):
         # Initialize HAT and motors
@@ -25,8 +26,8 @@ class car(object):
         self.MAX_SPEED = 255
 
         # Initialize sensors
-        self.us1 = sensor(19, 16, 1, 0.3)
-        #self.us2 = sensor(19, 20) #Re-enable when more sensors needed
+        self.us1 = sensor(19, 16, .3) # Makes decision at 30 cm
+        #self.us2 = sensor(19, 20, .3) #Re-enable when more sensors needed
 
     def turnOffMotors(self):
         self.steering.run(Adafruit_MotorHAT.RELEASE)
@@ -34,9 +35,9 @@ class car(object):
 
     def drive(self):
         for i in range(100):  # Runs for 10 seconds
-            if self.us1.senseObject():
+            if self.us1.collisonWarning():
                 self.right(self.MAX_SPEED);
-            else
+            else:
                 self.steering.setSpeed(0)
                 self.forward(self.MAX_SPEED)
             time.sleep(.1)
@@ -74,18 +75,63 @@ class car(object):
 
 class sensor(object):
 
-    def __init__(self, echo, trigger, max_d, trig_d):
-        self.ultrasonic = DistanceSensor(echo, trigger, max_distance=max_d, threshold_distance=trig_d)
+    def __init__(self, echo, trigger, min_distance=.3):
+        self.MIN_DISTANCE = min_distance * 100
+        # set GPIO Pins
+        self.GPIO_TRIGGER = trigger
+        self.GPIO_ECHO = echo
 
-    def senseObject(self):
+        # set GPIO direction (IN / OUT)
+        GPIO.setup(self.GPIO_TRIGGER, GPIO.OUT)
+        GPIO.setup(self.GPIO_ECHO, GPIO.IN)
 
- #       Senses if object is within the minimum safe distance
- #       :return: True if an object is within range, false if not
-
-        if self.ultrasonic.when_in_range():
+    def collisonWarning(self):
+        if self.getDistance() <= self.MIN_DISTANCE:
             return True
-        else:
-            return False
+        return False
+
+    def getDistance(self):
+        # Returns the distance in cm given by the sensor
+
+        # set Trigger to HIGH
+        GPIO.output(self.GPIO_TRIGGER, True)
+
+        # set Trigger after 0.01ms to LOW
+        time.sleep(0.00001)
+        GPIO.output(self.GPIO_TRIGGER, False)
+
+        startTime = time.time()
+        stopTime = time.time()
+
+        # save StartTime
+        while GPIO.input(self.GPIO_ECHO) == 0:
+            startTime = time.time()
+
+        # save time of arrival
+        while GPIO.input(self.GPIO_ECHO) == 1:
+            stopTime = time.time()
+
+        # time difference between start and arrival
+        TimeElapsed = stopTime - startTime
+
+        # multiply with the sonic speed (34300 cm/s)
+        # and divide by 2, because there and back
+        distance = (TimeElapsed * 34300) / 2
+
+        return distance
+
+    def distanceTest(self):
+        # Tests the sensor input, outputs to console
+        try:
+            while True:
+                dist = self.getDistance()
+                print ("Measured Distance = %.1f cm" % dist)
+                time.sleep(1)
+
+                # Reset by pressing CTRL + C
+        except KeyboardInterrupt:
+            print("Measurement stopped by User")
+            GPIO.cleanup()
 
 car = car()
 
