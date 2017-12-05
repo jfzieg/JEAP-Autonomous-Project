@@ -116,7 +116,14 @@ class Car(object):
 
     def test(self):
         # Test sensor output
+        print("Testing Middle")
         self.usm.distanceTest()
+
+        print("Testing Left")
+        self.usl.distanceTest()
+
+        print("Testing Right")
+        self.usr.distanceTest()
 
         # Test obstacle detection and motor response
         self.drive()
