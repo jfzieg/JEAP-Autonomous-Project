@@ -11,7 +11,9 @@ RIGHT = 0
 STRAIGHT = 1
 LEFT = 2
 
-
+#############
+# CAR CLASS #
+#############
 class Car(object):
     # Controls for the rover. Uses input from sensors to determine optimal course
     # Assumes Steering = Motor1, Drive = Motor4
@@ -122,7 +124,9 @@ class Car(object):
         # turn off motor
         self.turnOff()
 
-
+################
+# SENSOR CLASS #
+################
 class Sensor(object):
     # Sensor object for use with Car class
     # GPIO code structure for getDistance() function taken from:
