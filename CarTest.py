@@ -39,11 +39,11 @@ class Car(object):
     def drive(self):
         # Decision should update frequently, currently 1/100th of a sec
         # Testing should see if this is enough
-        for i in range(1000):  # Runs for 10 seconds
+        # May want to add functionality to back up if dist to wall is ~0
+        for i in range(30000):  # Runs for 30 seconds
             if self.usm.collisonWarning():
                 self.turn(self.MAX_SPEED / 2)
             else:
-
                 self.forward(self.MAX_SPEED)
             time.sleep(.01)
 
