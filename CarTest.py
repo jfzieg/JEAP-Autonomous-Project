@@ -183,7 +183,7 @@ class Sensor(object):
             dist = self.getDistance()
             print ("Measured Distance = %.1f cm" % dist)
             if self.collisonWarning():
-                print "!!Min Distance Reached!!"
+                print("!!Min Distance Reached!!")
             time.sleep(.1)
 
     def __iter__(self):
