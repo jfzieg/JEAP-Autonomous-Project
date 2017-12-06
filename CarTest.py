@@ -162,7 +162,6 @@ class Sensor(object):
         GPIO.output(self.GPIO_TRIGGER, True)
         time.sleep(0.00001)
         GPIO.output(self.GPIO_TRIGGER, False)
-        pulse_start = time.time() #Added for bug fixing
 
         while GPIO.input(self.GPIO_ECHO) == 0:
             pulse_start = time.time()
