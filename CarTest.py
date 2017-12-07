@@ -31,9 +31,9 @@ class Car(object):
         # Initialize sensors
         # Defaults to decision made at 30 cm
         GPIO.setmode(GPIO.BCM)
-        self.usm = Sensor(13, 12) # Middle sensor
-        self.usr = Sensor(6, 5)   # Right side sensor
-        self.usl = Sensor(7, 8)   # Left side sensor
+        self.usm = Sensor(12, 13) # Middle sensor
+        self.usr = Sensor(5, 6)   # Right side sensor
+        self.usl = Sensor(8, 7)   # Left side sensor
         self.usTriggered = None
 
         self.sensors = [self.usl, self.usm, self.usr]
