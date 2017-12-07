@@ -2,7 +2,7 @@
 # PJ Solomon November 27 2017
 # Joseph Zieg November 29 2017
 #
-from Adafruit_MotorHAT import Adafruit_MotorHAT as HAT
+from Adafruit_MotorHAT import Adafruit_MotorHAT
 import RPi.GPIO as GPIO
 import time
 
@@ -22,8 +22,8 @@ class Car(object):
     # Uses 3 HR-S04 ultrasonic sensors for obstacle detection
 
     def __init__(self, addr=0x60, steering_id=1, drive_id=4):
-        # Initialize hat and motors
-        self.mh = HAT(addr)
+        # Initialize HAT and motors
+        self.mh = Adafruit_MotorHAT(addr)
         self.steering = self.mh.getMotor(steering_id)
         self.motor = self.mh.getMotor(drive_id)
         self.MAX_SPEED = 255
@@ -31,7 +31,7 @@ class Car(object):
         # Initialize sensors
         # Defaults to decision made at 30 cm
         GPIO.setmode(GPIO.BCM)
-        self.usm = Sensor(12, 13) # Middle sensor
+        self.usm = Sensor(13, 12) # Middle sensor
         self.usr = Sensor(5, 6)   # Right side sensor
         self.usl = Sensor(8, 7)   # Left side sensor
         self.usTriggered = None
@@ -46,23 +46,31 @@ class Car(object):
             if self.usm.collisonWarning():
                 self.turn(self.MAX_SPEED / 2)
             else:
+                self.steering.setSpeed(0)
                 self.forward(self.MAX_SPEED)
             time.sleep(.01)
 
     def forward(self, speed):
-        self.steering.setSpeed(0)
-        self.steering.run(HAT.FORWARD)
-
         self.motor.setSpeed(speed)
-        self.motor.run(HAT.FORWARD)
+        self.motor.run(Adafruit_MotorHAT.BACKWARD)
 
     def backward(self, speed):
-        self.steering.setSpeed(0)
-        self.steering.run(HAT.FORWARD)
-
         self.motor.reverse()
         self.motor.setSpeed(speed)
-        self.motor.run(HAT.BACKWARD)
+        self.motor.run(Adafruit_MotorHAT.FOREWARD)
+
+    # def turn(self, speed, direction):
+    #     if direction is RIGHT:
+    #         self.steering.setSpeed(speed)
+    #         self.motor.setSpeed(speed)
+    #         self.steering.run(Adafruit_MotorHAT.FORWARD)
+    #         self.motor.run(Adafruit_MotorHAT.FORWARD)
+    #     elif direction is LEFT:
+    #         self.steering.reverse()
+    #         self.steering.setSpeed(speed)
+    #         self.motor.setSpeed(speed)
+    #         self.steering.run(Adafruit_MotorHAT.FORWARD)
+    #         self.motor.run(Adafruit_MotorHAT.FORWARD)
 
     def right(self, speed):
         # idk if these are the correct directions
@@ -111,9 +119,8 @@ class Car(object):
         return False
 
     def turnOff(self):
-        # Stop motors and clean up GPIO pins
-        self.steering.run(HAT.RELEASE)
-        self.motor.run(HAT.RELEASE)
+        self.steering.run(Adafruit_MotorHAT.RELEASE)
+        self.motor.run(Adafruit_MotorHAT.RELEASE)
         GPIO.cleanup()
 
     def test(self):
@@ -143,12 +150,12 @@ class Sensor(object):
     # GPIO code structure for getDistance() function taken from:
     # https://www.modmypi.com/download/range_sensor.py
 
-    def __init__(self, echo, trigger, min_distance=.3):
+    def __init__(self, echo, trigger, min_distance=.2):
         self.MIN_DISTANCE = min_distance * 100
         # set GPIO Pins
         self.GPIO_TRIGGER = trigger
         self.GPIO_ECHO = echo
-
+        GPIO.setwarnings(False)
         GPIO.setup(self.GPIO_TRIGGER, GPIO.OUT)
         GPIO.setup(self.GPIO_ECHO, GPIO.IN)
 
@@ -181,8 +188,8 @@ class Sensor(object):
         return distance
 
     def distanceTest(self):
-        # Tests the sensor input, outputs to console for 3s
-        for i in range(30):
+        # Tests the sensor input, outputs to console for 10s
+        for i in range(3):
             dist = self.getDistance()
             print ("Measured Distance = %.1f cm" % dist)
             if self.collisonWarning():
