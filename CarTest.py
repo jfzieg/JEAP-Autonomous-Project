@@ -3,7 +3,6 @@
 # Joseph Zieg November 29 2017
 #
 from Adafruit_MotorHAT import Adafruit_MotorHAT as HAT
-import SensorTest as s
 import RPi.GPIO as GPIO
 import time
 
@@ -11,7 +10,6 @@ import time
 RIGHT = 0
 STRAIGHT = 1
 LEFT = 2
-
 
 #############
 # CAR CLASS #
@@ -33,9 +31,9 @@ class Car(object):
         # Initialize sensors
         # Defaults to decision made at 30 cm
         GPIO.setmode(GPIO.BCM)
-        self.usm = s.Sensor(13, 12)  # Middle sensor
-        self.usr = s.Sensor(6, 5)  # Right side sensor
-        self.usl = s.Sensor(7, 8)  # Left side sensor
+        self.usm = Sensor(13, 12) # Middle sensor
+        self.usr = Sensor(6, 5)   # Right side sensor
+        self.usl = Sensor(7, 8)   # Left side sensor
         self.usTriggered = None
 
         self.sensors = [self.usl, self.usm, self.usr]
@@ -103,7 +101,7 @@ class Car(object):
         else:
             return LEFT
 
-    def CollisionWarning(self):
+    def collisionWarning(self):
         # Iterates over the sensor array, determines if one sensor is triggered
         # returns True if an object is within minimum safe distance for any sensor
         for us in self.sensors:
@@ -134,6 +132,62 @@ class Car(object):
 
         # turn off motor
         self.turnOff()
+
+################
+# SENSOR CLASS #
+################
+
+
+class Sensor(object):
+    # Sensor object for use with Car class
+    # GPIO code structure for getDistance() function taken from:
+    # https://www.modmypi.com/download/range_sensor.py
+
+    def __init__(self, echo, trigger, min_distance=.3):
+        self.MIN_DISTANCE = min_distance * 100
+        # set GPIO Pins
+        self.GPIO_TRIGGER = trigger
+        self.GPIO_ECHO = echo
+
+        GPIO.setup(self.GPIO_TRIGGER, GPIO.OUT)
+        GPIO.setup(self.GPIO_ECHO, GPIO.IN)
+
+        GPIO.output(self.GPIO_TRIGGER, False)
+        time.sleep(2)
+
+    def collisonWarning(self):
+        if self.getDistance() <= self.MIN_DISTANCE:
+            return True
+        return False
+
+    def getDistance(self):
+        # Returns the distance in cm given by the sensor
+
+        GPIO.output(self.GPIO_TRIGGER, True)
+        time.sleep(0.00001)
+        GPIO.output(self.GPIO_TRIGGER, False)
+
+        while GPIO.input(self.GPIO_ECHO) == 0:
+            pulse_start = time.time()
+
+        while GPIO.input(self.GPIO_ECHO) == 1:
+            pulse_end = time.time()
+
+        pulse_duration = pulse_end - pulse_start
+
+        distance = pulse_duration * 17150
+
+        distance = round(distance, 2)
+        return distance
+
+    def distanceTest(self):
+        # Tests the sensor input, outputs to console for 3s
+        for i in range(30):
+            dist = self.getDistance()
+            print ("Measured Distance = %.1f cm" % dist)
+            if self.collisonWarning():
+                print("!!Min Distance Reached!!")
+            time.sleep(.1)
 
 
 ####################
