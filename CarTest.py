@@ -31,6 +31,7 @@ class Car(object):
         # Initialize sensors
         # Defaults to decision made at 30 cm
         GPIO.setmode(GPIO.BCM)
+        print("Initializing Sensors")
         self.usm = Sensor(12, 13) # Middle sensor
         self.usr = Sensor(5, 6)   # Right side sensor
         self.usl = Sensor(8, 7)   # Left side sensor
@@ -44,7 +45,11 @@ class Car(object):
         # May want to add functionality to back up if dist to wall is ~0
         for i in range(sec * 1000):  # Runs for sec amount of seconds
             if self.collisionWarning():
-                self.turn(self.MAX_SPEED / 2)
+                print("Collision Warning")
+                for us in self.sensors:
+                    print(self.sensors.index(us), us.getDistance())
+                self.turn(self.MAX_SPEED)
+                self.forward(self.MAX_SPEED)
             else:
                 self.steering.setSpeed(0)
                 self.forward(self.MAX_SPEED)
@@ -75,16 +80,10 @@ class Car(object):
         self.steering.setSpeed(self.MAX_SPEED)
         self.steering.run(HAT.BACKWARD)
 
-        self.motor.setSpeed(speed)
-        self.motor.run(HAT.FORWARD)
-
     def left(self, speed):
         # idk if these are the correct directions
         self.steering.setSpeed(self.MAX_SPEED)
         self.steering.run(HAT.FORWARD)
-
-        self.motor.setSpeed(speed)
-        self.motor.run(HAT.FORWARD)
 
     def turn(self, speed):
         if self.usTriggered == STRAIGHT:
@@ -122,7 +121,7 @@ class Car(object):
 
     def test(self):
         # Test sensor output
-        print("Initializing Sensors")
+
 
         print("Testing Middle")
         self.usm.distanceTest()
