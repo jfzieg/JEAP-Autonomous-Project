@@ -36,12 +36,11 @@ class Car(object):
 
         self.sensors = [self.usl, self.usm, self.usr]
 
-    def drive(self):
+    def drive(self, sec):
         # Decision should update frequently, currently 1/100th of a sec
         # Testing should see if this is enough
         # May want to add functionality to back up if dist to wall is ~0
-        for i in range(3000):  # Runs for 30 seconds
-	    print("Current Time: ",i/1000)
+        for i in range(sec * 1000):  # Runs for sec amount of seconds
             if self.usm.collisonWarning():
                 self.turn(self.MAX_SPEED / 2)
             else:
@@ -127,7 +126,7 @@ class Car(object):
         self.usr.distanceTest()
 
         # Test obstacle detection and motor response
-        self.drive()
+        self.drive(30)
 
         # turn off motor
         self.turnOff()
@@ -159,22 +158,23 @@ class Sensor(object):
 
     def getDistance(self):
         # Returns the distance in cm given by the sensor
-          GPIO.output(self.GPIO_TRIGGER, 1)
-          time.sleep(0.00001)
-          GPIO.output(self.GPIO_TRIGGER, 0)
 
-          while GPIO.input(self.GPIO_ECHO) == 0:
+        GPIO.output(self.GPIO_TRIGGER, True)
+        time.sleep(0.00001)
+        GPIO.output(self.GPIO_TRIGGER, False)
+
+        while GPIO.input(self.GPIO_ECHO) == 0:
             pulse_start = time.time()
 
-          while GPIO.input(self.GPIO_ECHO) == 1:
+        while GPIO.input(self.GPIO_ECHO) == 1:
             pulse_end = time.time()
 
-          pulse_duration = pulse_end - pulse_start
+        pulse_duration = pulse_end - pulse_start
 
-          distance = pulse_duration * 17150
+        distance = pulse_duration * 17150
 
-          distance = round(distance, 2)
-          return distance
+        distance = round(distance, 2)
+        return distance
 
     def distanceTest(self):
         # Tests the sensor input, outputs to console for 10s
