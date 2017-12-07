@@ -159,12 +159,9 @@ class Sensor(object):
 
     def getDistance(self):
         # Returns the distance in cm given by the sensor
-      success = False
-      while success == False:
-        try:
-          GPIO.output(self.GPIO_TRIGGER, True)
+          GPIO.output(self.GPIO_TRIGGER, 1)
           time.sleep(0.00001)
-          GPIO.output(self.GPIO_TRIGGER, False)
+          GPIO.output(self.GPIO_TRIGGER, 0)
 
           while GPIO.input(self.GPIO_ECHO) == 0:
             pulse_start = time.time()
@@ -177,10 +174,7 @@ class Sensor(object):
           distance = pulse_duration * 17150
 
           distance = round(distance, 2)
-	  success = True
-        except:
-	  success = False
-      return distance
+          return distance
 
     def distanceTest(self):
         # Tests the sensor input, outputs to console for 10s
