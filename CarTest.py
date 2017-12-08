@@ -1,7 +1,7 @@
 # Authors:
 # PJ Solomon November 27 2017
 # Joseph Zieg November 29 2017
-#
+
 from Adafruit_MotorHAT import Adafruit_MotorHAT as HAT
 import RPi.GPIO as GPIO
 import time
@@ -31,7 +31,6 @@ class Car(object):
         # Initialize sensors
         # Defaults to decision made at 30 cm
         GPIO.setmode(GPIO.BCM)
-        print("Initializing Sensors")
         self.usm = Sensor(12, 13) # Middle sensor
         self.usr = Sensor(5, 6)   # Right side sensor
         self.usl = Sensor(8, 7)   # Left side sensor
@@ -48,8 +47,7 @@ class Car(object):
                 print("Collision Warning")
                 for us in self.sensors:
                     print(self.sensors.index(us), us.getDistance())
-                self.turn(self.MAX_SPEED)
-                self.forward(self.MAX_SPEED)
+                self.turn(self.MAX_SPEED / 2)
             else:
                 self.steering.setSpeed(0)
                 self.forward(self.MAX_SPEED)
@@ -63,27 +61,20 @@ class Car(object):
         self.motor.setSpeed(speed)
         self.motor.run(HAT.FORWARD)
 
-    # def turn(self, speed, direction):
-    #     if direction is RIGHT:
-    #         self.steering.setSpeed(speed)
-    #         self.motor.setSpeed(speed)
-    #         self.steering.run(HAT.FORWARD)
-    #         self.motor.run(HAT.FORWARD)
-    #     elif direction is LEFT:
-    #         self.steering.reverse()
-    #         self.steering.setSpeed(speed)
-    #         self.motor.setSpeed(speed)
-    #         self.steering.run(HAT.FORWARD)
-    #         self.motor.run(HAT.FORWARD)
-
     def right(self, speed):
         self.steering.setSpeed(self.MAX_SPEED)
         self.steering.run(HAT.BACKWARD)
+
+        self.motor.setSpeed(speed)
+        self.motor.run(HAT.FORWARD)
 
     def left(self, speed):
         # idk if these are the correct directions
         self.steering.setSpeed(self.MAX_SPEED)
         self.steering.run(HAT.FORWARD)
+
+        self.motor.setSpeed(speed)
+        self.motor.run(HAT.FORWARD)
 
     def turn(self, speed):
         if self.usTriggered == STRAIGHT:
@@ -93,11 +84,11 @@ class Car(object):
             elif direction is LEFT:
                 self.right(speed)
 
-        # elif self.usTriggered == LEFT:
-        #     self.right(speed)
-        #
-        # elif self.usTriggered == RIGHT:
-        #     self.left(speed)
+        elif self.usTriggered == LEFT:
+            self.right(speed)
+
+        elif self.usTriggered == RIGHT:
+            self.left(speed)
 
     def directionDecision(self):
         if self.sensors[0].getDistance() < self.sensors[2].getDistance():
@@ -121,7 +112,7 @@ class Car(object):
 
     def test(self):
         # Test sensor output
-
+        print("Initializing Sensors")
 
         print("Testing Middle")
         self.usm.distanceTest()
@@ -203,6 +194,7 @@ try:
     car = Car()
 
     car.test()
+    print("Program closed")
 except KeyboardInterrupt:
     car.turnOff()
     print("Program closed")
