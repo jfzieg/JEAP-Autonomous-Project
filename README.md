@@ -9,13 +9,16 @@ Obstacle avoidance will be tested using an array of HR-S04 ultrasonic sensors, w
 sensor readings that could lead to the rover crashing. The current implemetation uses the DistanceSensor class from
 the `gpiozero` library.
 
+![Short Test of Autonomous Control]
+(https://imgur.com/a/E3mW5)
+
 # Rover Control
 The rover control is tailored to integrate with an RC car powered by 2 DC motors. The motors are driven by an
 Adafruit Stepper Motor HAT and a Raspberry Pi, implemented using the `Adafruit_MotorHAT` library.
 
 ### Contributors
-Everest Witman: Project Manager, Junior Developer
-Joseph Zieg: Senior Developer
-Aaron Seibring: Head Hardware Engineer
-PJ Solomon: Hardware Engineer, Junior Developer
+*Everest Witman: Project Manager, Junior Developer
+*Joseph Zieg: Senior Developer
+*Aaron Seibring: Head Hardware Engineer
+*PJ Solomon: Hardware Engineer, Junior Developer
 
