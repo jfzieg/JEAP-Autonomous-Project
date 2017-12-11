@@ -9,7 +9,7 @@ Obstacle avoidance will be tested using an array of HR-S04 ultrasonic sensors, w
 sensor readings that could lead to the rover crashing. The current implemetation uses the DistanceSensor class from
 the `gpiozero` library.
 
-![Short Test of Autonomous Control](https://imgur.com/a/E3mW5)
+![Short Test of Autonomous Control](https://i.imgur.com/FqeefRO.gifv)
 
 # Rover Control
 The rover control is tailored to integrate with an RC car powered by 2 DC motors. The motors are driven by an
