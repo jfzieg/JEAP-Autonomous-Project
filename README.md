@@ -4,6 +4,8 @@ a motorized rover that is able to move autonomously. The design consists of a re
 Raspberry Pi 3 Model B+, implementing ultrasonic range detection for obstacle avoidance. We will be overhauling
 the current RC control scheme of the car to allow it to be controlled directly from the Raspberry Pi.
 
+![Front Image](https://i.imgur.com/yL8BOof.jpg) ![Top Down Image](https://i.imgur.com/UdsWUOl.jpg)
+
 # Obstacle Avoidance
 Obstacle avoidance will be tested using an array of HR-S04 ultrasonic sensors, with the goal of minimizing error in
 sensor readings that could lead to the rover crashing. The current implemetation uses the DistanceSensor class from
@@ -13,7 +15,7 @@ the `gpiozero` library.
 
 # Rover Control
 The rover control is tailored to integrate with an RC car powered by 2 DC motors. The motors are driven by an
-Adafruit Stepper Motor HAT and a Raspberry Pi, implemented using the `Adafruit_MotorHAT` library.
+![Adafruit Stepper Motor HAT](https://www.adafruit.com/product/2348) and a Raspberry Pi, implemented using the `Adafruit_MotorHAT` library.
 
 ### Contributors
 * Everest Witman: Project Manager, Junior Developer
